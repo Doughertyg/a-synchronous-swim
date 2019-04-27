@@ -6,25 +6,31 @@
   // TODO: build the swim command fetcher here
   //
   
+  //how to implement a post process for server to post moves to client?
+
   const getFromServer = () => {
-    
+    console.log('get');
     $.ajax({
       type: 'GET',
-      data: SwimTeam.direction,
-      url: 'http://127.0.0.1:3000',
-      cache: false,
-      contentType: false,
-      processData: false,
-      success: (data) => {
+      url: 'http://127.0.0.1:3000/',
+      success: (res) => {
         // reload the page
-        console.log('success!:', data);
-      }
+        console.log('success!:', res);
+        SwimTeam.move(res);
+      },
+      error: (err) => console.log(err)
     });
   };
   
   $('.get').on('click', function() {
     console.log('click!');
     getFromServer();
+  })
+
+  $(document).ready(function() { //workflow is inefficient... client checks for changes every second... server serving requests while receiving input
+    setInterval(function() { //must manage receipt of input and serving requests better. perhaps push to queue then post to client async
+      getFromServer(); //theres latency in this system
+    }, 2000)
   })
 
   /////////////////////////////////////////////////////////////////////
@@ -38,13 +44,14 @@
     $.ajax({
       type: 'POST',
       data: formData,
-      url: 'http://127.0.0.1:3000',
+      url: 'http://127.0.0.1:3000/background.jpg',
       cache: false,
       contentType: false,
       processData: false,
-      success: () => {
+      success: (data) => {
         // reload the page
-        window.location = window.location.href;
+        console.log('uploading img');
+        // window.location = window.location.href;
       }
     });
   };
@@ -64,7 +71,10 @@
       return;
     }
 
+    console.log(file);
+    $('body').css({"background-image": file});
     ajaxFileUplaod(file);
+    // $('body').css({"background-image": file});
   });
   
 
