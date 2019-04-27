@@ -1,4 +1,4 @@
-
+3
 require('./js/keypressHandler').initialize();
 const httpHandler = require('./js/httpHandler');
 
